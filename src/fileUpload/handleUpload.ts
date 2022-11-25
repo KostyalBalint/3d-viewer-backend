@@ -6,13 +6,21 @@ export const handleUpload = (req: Request, res: Response) => {
     return res.status(400).json({ message: "No files were uploaded." });
   }
 
-  const sampleFile = req.files.sampleFile;
-  if (Array.isArray(sampleFile)) {
-    //Multiple files => Save all of them
-    sampleFile.forEach((file) => {
-      storeFile(file);
-    });
-  } else {
-    storeFile(sampleFile);
+  const sampleFile = req.files.images;
+  try {
+    if (Array.isArray(sampleFile)) {
+      //Multiple files => Save all of them
+      sampleFile.map((file) => {
+        storeFile(file);
+      });
+    } else {
+      storeFile(sampleFile);
+    }
+    res.json({ message: "File uploaded successfully" });
+  } catch (e) {
+    console.error(e);
+    return res
+      .status(500)
+      .json({ message: "Error while processing file upload" });
   }
 };
